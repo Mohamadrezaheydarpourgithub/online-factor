@@ -1,4 +1,5 @@
-import { store, toJalali, nowTimeFa } from "./store.js";
+import { store, toJalali, nowTimeFa, toEnDigits } from "./store.js";
+export const toEnglishDigits = toEnDigits;
 
 const DB_NAME = "cafe-fs-access";
 const DB_STORE = "handles";
