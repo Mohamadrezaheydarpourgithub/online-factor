@@ -256,8 +256,8 @@ export async function performLocalFolderBackup({
     const lastFolderDate = lbConfig.lastBackupDate;
     const autoConfirmNewDay = Boolean(lbConfig.autoConfirmNewDay);
 
-    // بررسی عدم همخوانی تاریخ پوشه قبلی با تاریخ امروز
-    if (lastFolderDate && lastFolderDate !== todayDate && !forceNewFolder) {
+    // بررسی عدم همخوانی تاریخ پوشه قبلی با تاریخ امروز (در حالت آفلاین به صورت خودکار پوشه روز جدید ساخته می‌شود)
+    if (lastFolderDate && lastFolderDate !== todayDate && !forceNewFolder && trigger !== "offline") {
       if (!autoConfirmNewDay) {
         // هشدار به ادمین و درخواست تأیید
         const userApproved = await askAdminNewDayFolderConfirm(lastFolderDate, todayDate);
@@ -328,7 +328,9 @@ export async function performLocalFolderBackup({
           ? "در زمان Push"
           : trigger === "timer"
             ? "زمان‌بندی خودکار"
-            : "دستی";
+            : trigger === "offline"
+              ? "حالت آفلاین (در صف ارسال)"
+              : "دستی";
       showBackupToast(`💾 بک‌آپ محلی (${triggerLabel}) با موفقیت در پوشه «${todayDate}» ذخیره شد`);
     }
 

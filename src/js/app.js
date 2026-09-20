@@ -10,7 +10,7 @@ import { initInvoicesList } from "./invoices-list.js";
 import { initProformasList, updateProformaBadge } from "./proformas-list.js";
 import { initAuth } from "./auth.js";
 import { initBackup, autoSaveInvoices } from "./backup.js";
-import { initGitHubUI, autoPushGitHub } from "./github.js";
+import { initGitHubUI, autoPushGitHub, initOfflineSyncManager } from "./github.js";
 import { initReports } from "./reports.js"; // ✅ اضافه شد
 import { initCustomers, renderCustomers } from "./customers.js";
 import { initCustomerPortal } from "./customer-portal.js";
@@ -918,6 +918,7 @@ const APP_ROLE = getAppRole();
 
 if (APP_ROLE === "customer") {
   initCustomerPortal();
+  initOfflineSyncManager();
 } else {
   document.getElementById("btn-save-najva")?.addEventListener("click", () => {
     saveNajvaConfig({

@@ -48,6 +48,240 @@ function ghToast(msg) {
   setTimeout(() => t.classList.add("hidden"), 3000);
 }
 
+/* =========================================================================
+   مدیریت وضعیت آفلاین و صف همگام‌سازی خودکار (Offline Sync Manager)
+   ========================================================================= */
+const OFFLINE_SYNC_KEY = "cafe_pending_offline_sync";
+let isOfflineActive = false;
+let offlineProbeTimer = null;
+
+export function getPendingOfflineData() {
+  try {
+    return JSON.parse(localStorage.getItem(OFFLINE_SYNC_KEY)) || { count: 0, items: [] };
+  } catch {
+    return { count: 0, items: [] };
+  }
+}
+
+export function savePendingOfflineData(data) {
+  try {
+    localStorage.setItem(OFFLINE_SYNC_KEY, JSON.stringify(data));
+  } catch (e) {
+    console.warn("خطا در ذخیره داده‌های صف آفلاین:", e);
+  }
+}
+
+export function recordPendingOfflineChange(title = "تغییر اطلاعات") {
+  const data = getPendingOfflineData();
+  data.count = (data.count || 0) + 1;
+  data.lastAt = new Date().toISOString();
+  if (!data.items) data.items = [];
+  data.items.push({ title, at: data.lastAt });
+  savePendingOfflineData(data);
+  updateOfflineBannerUI();
+}
+
+export function clearPendingOfflineChanges() {
+  localStorage.removeItem(OFFLINE_SYNC_KEY);
+  updateOfflineBannerUI();
+}
+
+export function getPendingOfflineChangesCount() {
+  return getPendingOfflineData().count || 0;
+}
+
+export function isOfflineMode() {
+  return isOfflineActive || !navigator.onLine;
+}
+
+function adjustBarPosition() {
+  const updateBar = document.getElementById("app-update-bar");
+  const offlineBar = document.getElementById("app-offline-bar");
+  if (!offlineBar) return;
+  if (updateBar && !updateBar.classList.contains("hidden")) {
+    offlineBar.style.top = `${updateBar.offsetHeight}px`;
+  } else {
+    offlineBar.style.top = "0px";
+  }
+}
+
+export function updateOfflineBannerUI(reason = "", wasSuccess = false) {
+  const bar = document.getElementById("app-offline-bar");
+  if (!bar) return;
+
+  const titleEl = document.getElementById("offline-bar-title");
+  const descEl = document.getElementById("offline-bar-desc");
+  const badgeEl = document.getElementById("offline-pending-badge");
+  const iconEl = document.getElementById("offline-bar-icon");
+  const btnRetry = document.getElementById("btn-retry-sync");
+
+  const count = getPendingOfflineChangesCount();
+  const offline = isOfflineMode() || count > 0;
+
+  if (offline && !wasSuccess) {
+    bar.classList.remove("hidden");
+    bar.className =
+      "sticky top-0 z-[95] bg-gradient-to-r from-amber-600 via-amber-700 to-orange-600 text-white shadow-xl px-3 sm:px-6 py-2 sm:py-2.5 transition-all duration-300 border-b border-white/20";
+    if (iconEl) {
+      iconEl.textContent = "⚡";
+      iconEl.className = "text-xl sm:text-2xl shrink-0 animate-pulse";
+    }
+    if (titleEl) titleEl.textContent = "حالت آفلاین فعال است";
+    if (badgeEl) {
+      badgeEl.textContent =
+        count > 0
+          ? `${count.toLocaleString("fa-IR")} تغییر در صف ارسال`
+          : "ذخیره محلی فعال";
+    }
+    if (descEl) {
+      descEl.textContent =
+        reason
+          ? `${reason}. تغییرات در حافظه و پوشه محلی ذخیره شده‌اند و به محض برقراری اتصال اینترنت به گیت‌هاب ارسال خواهند شد.`
+          : "اینترنت در دسترس نیست یا اتصال با خطا مواجه شد. تغییرات به صورت محلی ذخیره شده و به محض آنلاین شدن به گیت‌هاب ارسال می‌شوند.";
+    }
+    if (btnRetry) btnRetry.disabled = false;
+    adjustBarPosition();
+  } else if (wasSuccess) {
+    bar.classList.remove("hidden");
+    bar.className =
+      "sticky top-0 z-[95] bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 text-white shadow-xl px-3 sm:px-6 py-2 sm:py-2.5 transition-all duration-300 border-b border-white/20";
+    if (iconEl) {
+      iconEl.textContent = "✅";
+      iconEl.className = "text-xl sm:text-2xl shrink-0";
+    }
+    if (titleEl) titleEl.textContent = "اتصال برقرار شد — تمامی تغییرات ذخیره شدند";
+    if (badgeEl) badgeEl.textContent = "همگام‌سازی کامل";
+    if (descEl) descEl.textContent = "تمامی فاکتورها، پیش‌فاکتورها و اطلاعات ثبت‌شده با موفقیت روی گیت‌هاب ذخیره شدند ☁️";
+    if (btnRetry) btnRetry.disabled = true;
+    adjustBarPosition();
+
+    setTimeout(() => {
+      if (!isOfflineActive && getPendingOfflineChangesCount() === 0) {
+        bar.classList.add("hidden");
+      }
+    }, 3500);
+  } else {
+    bar.classList.add("hidden");
+  }
+}
+
+export function setOfflineMode(active, reason = "", wasSuccess = false) {
+  isOfflineActive = active;
+  updateOfflineBannerUI(reason, wasSuccess);
+
+  if (active) {
+    startOfflineProbe();
+  } else if (offlineProbeTimer) {
+    clearInterval(offlineProbeTimer);
+    offlineProbeTimer = null;
+  }
+}
+
+export async function probeNetworkConnectivity() {
+  if (!navigator.onLine) return false;
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4500);
+    const res = await fetch(`https://api.github.com/zen?_t=${Date.now()}`, {
+      method: "GET",
+      signal: controller.signal,
+      cache: "no-store",
+    });
+    clearTimeout(timeoutId);
+    return res.ok || res.status === 403 || res.status === 429;
+  } catch {
+    return false;
+  }
+}
+
+function startOfflineProbe() {
+  if (offlineProbeTimer) clearInterval(offlineProbeTimer);
+  offlineProbeTimer = setInterval(async () => {
+    if (!isOfflineMode() && getPendingOfflineChangesCount() === 0) {
+      clearInterval(offlineProbeTimer);
+      offlineProbeTimer = null;
+      return;
+    }
+    if (navigator.onLine) {
+      const reachable = await probeNetworkConnectivity();
+      if (reachable) {
+        console.log("🌐 اتصال اینترنت مجدداً تایید شد — شروع ارسال تغییرات در صف...");
+        await retryPendingSync();
+      }
+    }
+  }, 20000);
+}
+
+export async function retryPendingSync() {
+  const btn = document.getElementById("btn-retry-sync");
+  const icon = document.getElementById("btn-retry-sync-icon");
+  const text = document.getElementById("btn-retry-sync-text");
+  if (btn) btn.disabled = true;
+  if (icon) icon.className = "text-sm inline-block animate-spin";
+  if (text) text.textContent = "در حال ارسال به گیت‌هاب...";
+
+  try {
+    const res = await syncAllStorages({
+      title: "همگام‌سازی پس از آنلاین شدن",
+      showToast: true,
+      isRetry: true,
+    });
+    return res;
+  } finally {
+    if (btn) btn.disabled = false;
+    if (icon) icon.className = "text-sm";
+    if (text) text.textContent = "تلاش مجدد برای ارسال";
+  }
+}
+
+export function initOfflineSyncManager() {
+  const btnRetry = document.getElementById("btn-retry-sync");
+  btnRetry?.addEventListener("click", () => retryPendingSync());
+
+  window.addEventListener("online", async () => {
+    console.log("رویداد online مرورگر فعال شد");
+    const count = getPendingOfflineChangesCount();
+    if (count > 0 || isOfflineActive) {
+      const ok = await probeNetworkConnectivity();
+      if (ok) {
+        await retryPendingSync();
+      }
+    } else {
+      setOfflineMode(false);
+    }
+  });
+
+  window.addEventListener("offline", () => {
+    console.log("رویداد offline مرورگر فعال شد");
+    setOfflineMode(true, "اتصال اینترنت قطع شد");
+  });
+
+  document.addEventListener("visibilitychange", async () => {
+    if (document.visibilityState === "visible") {
+      if (isOfflineActive || getPendingOfflineChangesCount() > 0) {
+        if (navigator.onLine && (await probeNetworkConnectivity())) {
+          await retryPendingSync();
+        }
+      }
+    }
+  });
+
+  window.addEventListener("resize", adjustBarPosition);
+
+  // بررسی وضعیت اولیه
+  const pendingCount = getPendingOfflineChangesCount();
+  if (!navigator.onLine) {
+    setOfflineMode(true, "اینترنت در دسترس نیست");
+  } else if (pendingCount > 0) {
+    setOfflineMode(true, "تغییرات در صف همگام‌سازی");
+    setTimeout(async () => {
+      if (await probeNetworkConnectivity()) {
+        await retryPendingSync();
+      }
+    }, 3000);
+  }
+}
+
 /* ---------- push خودکار به ریپوی بک‌آپ ---------- */
 export function autoPushGitHub(title = "پشتیبان‌گیری خودکار") {
   syncAllStorages({ title, showToast: false });
@@ -62,7 +296,12 @@ export function autoPushPublicRepo(title = "همگام‌سازی عمومی") {
 let isSyncing = false;
 let syncDebounceTimer = null;
 
-export async function syncAllStorages({ title = "همگام‌سازی گیت‌هاب", showToast = false, _task = null } = {}) {
+export async function syncAllStorages({
+  title = "همگام‌سازی گیت‌هاب",
+  showToast = false,
+  _task = null,
+  isRetry = false,
+} = {}) {
   try {
     autoSaveInvoices();
   } catch (_) {}
@@ -80,6 +319,25 @@ export async function syncAllStorages({ title = "همگام‌سازی گیت‌
     return { ok: false, message: "تنظیمات گیت‌هاب یافت نشد" };
   }
 
+  // ۱. بررسی حالت آفلاین: اگر اینترنت قطع باشد، بلافاصله بک‌آپ لوکال اجرا شده و در صف قرار می‌گیرد
+  if ((!navigator.onLine || isOfflineMode()) && !isRetry) {
+    console.log("حالت آفلاین فعال است — تغییر به صف همگام‌سازی اضافه شد:", title);
+    setOfflineMode(true, "اینترنت در دسترس نیست");
+    recordPendingOfflineChange(title);
+
+    // بک‌آپ لوکال بلافاصله آپدیت بشه (فقط در حالت آفلاین اینجوری بشه)
+    try {
+      await performLocalFolderBackup({ trigger: "offline", showToast: true });
+    } catch (e) {
+      console.warn("خطا در بک‌آپ لوکال آفلاین:", e);
+    }
+
+    if (showToast) {
+      ghToast("⚡ حالت آفلاین: دیتای لوکال آپدیت شد و در صف ارسال به گیت‌هاب قرار گرفت");
+    }
+    return { ok: false, offline: true, message: "ذخیره در حالت آفلاین انجام شد" };
+  }
+
   const task = _task || startPushTask(title, "در حال بررسی اتصال به گیت‌هاب...");
 
   if (isSyncing) {
@@ -87,7 +345,7 @@ export async function syncAllStorages({ title = "همگام‌سازی گیت‌
     clearTimeout(syncDebounceTimer);
     return new Promise((resolve) => {
       syncDebounceTimer = setTimeout(async () => {
-        resolve(await syncAllStorages({ title, showToast, _task: task }));
+        resolve(await syncAllStorages({ title, showToast, _task: task, isRetry }));
       }, 1000);
     });
   }
@@ -107,6 +365,10 @@ export async function syncAllStorages({ title = "همگام‌سازی گیت‌
       if (typeof window.updateGitHubStatusUI === "function") window.updateGitHubStatusUI();
 
       if (res.ok) {
+        const hadPending = getPendingOfflineChangesCount() > 0 || isOfflineActive;
+        clearPendingOfflineChanges();
+        setOfflineMode(false, "", hadPending);
+        triggerLocalBackupOnPush();
         task.complete("با موفقیت روی گیت‌هاب ذخیره شد ✅");
         if (showToast) {
           ghToast("✅ همگام‌سازی گیت‌هاب (عمومی و خصوصی) انجام شد ☁️");
@@ -116,6 +378,12 @@ export async function syncAllStorages({ title = "همگام‌سازی گیت‌
           task.fail("سد ضد تخریب: پوش لغو شد");
         } else {
           task.fail(res.message || "خطا در همگام‌سازی");
+          // ورود به حالت آفلاین و بک‌آپ فوری در پوشه لوکال
+          setOfflineMode(true, res.message || "خطا در اتصال به گیت‌هاب");
+          recordPendingOfflineChange(title);
+          try {
+            await performLocalFolderBackup({ trigger: "offline", showToast: true });
+          } catch (_) {}
         }
         if (showToast) {
           ghToast(`❌ خطا در همگام‌سازی گیت‌هاب: ${res.message || ""}`);
@@ -138,14 +406,24 @@ export async function syncAllStorages({ title = "همگام‌سازی گیت‌
 
       const allOk = (hasBackup ? backupRes.ok : true) && (hasPublic ? publicRes.ok : true);
       if (allOk) {
+        const hadPending = getPendingOfflineChangesCount() > 0 || isOfflineActive;
+        clearPendingOfflineChanges();
+        setOfflineMode(false, "", hadPending);
+        triggerLocalBackupOnPush();
         task.complete("با موفقیت روی گیت‌هاب ذخیره شد ✅");
         if (showToast) {
           ghToast("✅ همگام‌سازی ریپوی عمومی و خصوصی انجام شد ☁️");
         }
       } else {
         task.fail("خطا در همگام‌سازی گیت‌هاب");
+        // ورود به حالت آفلاین و بک‌آپ فوری در پوشه لوکال
+        setOfflineMode(true, "اتصال به گیت‌هاب با خطا مواجه شد");
+        recordPendingOfflineChange(title);
+        try {
+          await performLocalFolderBackup({ trigger: "offline", showToast: true });
+        } catch (_) {}
         if (showToast) {
-          ghToast("❌ خطا در همگام‌سازی با گیت‌هاب");
+          ghToast("❌ خطا در همگام‌سازی با گیت‌هاب: ذخیره در حالت آفلاین انجام شد");
         }
       }
       return { ok: backupRes.ok || publicRes.ok };
@@ -153,8 +431,13 @@ export async function syncAllStorages({ title = "همگام‌سازی گیت‌
   } catch (err) {
     console.error("خطا در syncAllStorages:", err);
     task.fail(err.message || "خطا در همگام‌سازی");
-    if (showToast) ghToast(`❌ خطا در همگام‌سازی: ${err.message}`);
-    return { ok: false, error: err.message };
+    setOfflineMode(true, err.message || "خطا در اتصال به گیت‌هاب");
+    recordPendingOfflineChange(title);
+    try {
+      await performLocalFolderBackup({ trigger: "offline", showToast: true });
+    } catch (_) {}
+    if (showToast) ghToast(`⚠️ خطا در اتصال: حالت آفلاین فعال شد و بک‌آپ محلی ذخیره گردید`);
+    return { ok: false, offline: true, error: err.message };
   } finally {
     isSyncing = false;
   }
@@ -1500,4 +1783,5 @@ export function initGitHubUI() {
 
   updateStatus();
   updatePublicStatus();
+  initOfflineSyncManager();
 }

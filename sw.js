@@ -1,5 +1,5 @@
 // sw.js - Service Worker برای کارکرد ۱۰۰٪ آفلاین و قابلیت نصب PWA با سرعت حداکثری
-const CACHE_NAME = "cafe-pwa-v7";
+const CACHE_NAME = "cafe-pwa-v8";
 
 const STATIC_ASSETS = [
   "./",
