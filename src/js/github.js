@@ -326,13 +326,21 @@ export async function syncAllStorages({
     recordPendingOfflineChange(title);
 
     // بک‌آپ لوکال بلافاصله آپدیت بشه (فقط در حالت آفلاین اینجوری بشه)
+    let backupRes = null;
     try {
-      await performLocalFolderBackup({ trigger: "offline", showToast: true });
+      backupRes = await performLocalFolderBackup({ trigger: "offline", showToast: true });
     } catch (e) {
       console.warn("خطا در بک‌آپ لوکال آفلاین:", e);
     }
 
-    if (showToast) {
+    if (backupRes && !backupRes.ok) {
+      console.warn("پشتیبان‌گیری لوکال در حالت آفلاین ناموفق بود:", backupRes.reason);
+      if (backupRes.reason === "no_dir") {
+        ghToast("⚡ حالت آفلاین: تغییر در صف گیت‌هاب ثبت شد (پوشه محلی هنوز در تنظیمات متصل نشده است)");
+      } else if (backupRes.reason === "no_permission") {
+        ghToast("⚠️ حالت آفلاین: مجوز دسترسی به پوشه محلی نیازمند تأیید است؛ لطفاً در تنظیمات روی پوشه کلیک کنید");
+      }
+    } else if (showToast) {
       ghToast("⚡ حالت آفلاین: دیتای لوکال آپدیت شد و در صف ارسال به گیت‌هاب قرار گرفت");
     }
     return { ok: false, offline: true, message: "ذخیره در حالت آفلاین انجام شد" };
@@ -485,6 +493,63 @@ async function gh(path, cfg, options = {}) {
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
   return data;
+}
+
+/* ---------- محاسبه هَش Git Blob SHA-1 در مرورگر برای تشخیص دقیق تغییرات فایل‌ها ---------- */
+export async function calculateGitBlobSha(contentStr) {
+  try {
+    const enc = new TextEncoder();
+    const contentBytes = enc.encode(contentStr);
+    const headerBytes = enc.encode(`blob ${contentBytes.byteLength}\0`);
+    const fullBytes = new Uint8Array(headerBytes.byteLength + contentBytes.byteLength);
+    fullBytes.set(headerBytes, 0);
+    fullBytes.set(contentBytes, headerBytes.byteLength);
+    const hashBuffer = await crypto.subtle.digest("SHA-1", fullBytes);
+    return Array.from(new Uint8Array(hashBuffer))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  } catch (err) {
+    console.warn("خطا در محاسبه هش SHA-1 گیت:", err);
+    return null;
+  }
+}
+
+/* ---------- فیلتر هوشمند: فقط فایل‌هایی که دارای دیتای جدید یا تغییریافته هستند انتخاب می‌شوند ---------- */
+export async function filterOnlyChangedFiles(candidateFiles, remoteFileShas) {
+  if (!remoteFileShas || remoteFileShas.size === 0) {
+    return candidateFiles;
+  }
+
+  // ۱. بررسی فایل‌های اصلی داده‌ها (فاکتورها، محصولات، مشتریان، اعلانات و ...)
+  const nonMetaFiles = candidateFiles.filter((f) => !f.path.endsWith("meta.json"));
+  const changedNonMetaFiles = [];
+
+  for (const f of nonMetaFiles) {
+    const localSha = await calculateGitBlobSha(f.content);
+    const remoteSha = remoteFileShas.get(f.path);
+    // اگر فایل در مخزن وجود نداشته باشد یا هش آن متفاوت باشد، دارای دیتای جدید است
+    if (!remoteSha || remoteSha !== localSha) {
+      changedNonMetaFiles.push(f);
+    }
+  }
+
+  // اگر هیچ فایل دیتایی تغییر نکرده باشد، هیچ ارسالی لازم نیست (حتی meta.json نیز ارسال نمی‌شود)
+  if (changedNonMetaFiles.length === 0) {
+    return [];
+  }
+
+  // ۲. متادیتا تنها برای بخش‌هایی که دیتای جدید دارند اضافه می‌شود
+  const result = [...changedNonMetaFiles];
+  const metaFiles = candidateFiles.filter((f) => f.path.endsWith("meta.json"));
+  for (const mf of metaFiles) {
+    if (mf.path.startsWith("backup/") && changedNonMetaFiles.some((f) => f.path.startsWith("backup/"))) {
+      result.push(mf);
+    } else if (mf.path.startsWith("data/") && changedNonMetaFiles.some((f) => f.path.startsWith("data/"))) {
+      result.push(mf);
+    }
+  }
+
+  return result;
 }
 
 /* ---------- بررسی وجود داده‌های محصولات در مخزن عمومی ---------- */
@@ -763,6 +828,7 @@ export async function pushCombinedToGitHub(cfg, { silent = false, task = null, t
       );
       baseTree = lastCommit.tree.sha;
 
+      let remoteFileShas = new Map();
       try {
         const treeData = await gh(
           `/repos/${cfg.owner}/${cfg.repo}/git/trees/${baseTree}?recursive=1`,
@@ -770,6 +836,7 @@ export async function pushCombinedToGitHub(cfg, { silent = false, task = null, t
         );
         if (Array.isArray(treeData?.tree)) {
           existingPaths = new Set(treeData.tree.map((t) => t.path));
+          remoteFileShas = new Map(treeData.tree.map((t) => [t.path, t.sha]));
         }
       } catch {}
     } catch {
@@ -800,12 +867,20 @@ export async function pushCombinedToGitHub(cfg, { silent = false, task = null, t
       baseTree = lastCommit.tree.sha;
     }
 
-    currentTask.update(35, "ارسال فایل‌های داده...");
+    currentTask.update(35, "بررسی و تفکیک فایل‌های دارای داده جدید...");
+    const filesToSend = baseTree ? await filterOnlyChangedFiles(files, remoteFileShas) : files;
+
+    // اگر هیچ فایلی دیتای جدیدی نداشته باشد، نیازی به ارسال بیهوده نیست
+    if (baseTree && filesToSend.length === 0) {
+      currentTask.complete("تمامی اطلاعات با گیت‌هاب همگام است (داده جدیدی برای ارسال وجود ندارد) ✅");
+      return { ok: true, noChanges: true, message: "تمامی اطلاعات همگام هستند" };
+    }
+
     const treeItems = [];
-    for (let i = 0; i < files.length; i++) {
-      const f = files[i];
-      const p = Math.round(35 + ((i + 1) / files.length) * 45);
-      currentTask.update(p, `ارسال داده‌ها (${i + 1} از ${files.length})...`);
+    for (let i = 0; i < filesToSend.length; i++) {
+      const f = filesToSend[i];
+      const p = Math.round(35 + ((i + 1) / filesToSend.length) * 45);
+      currentTask.update(p, `ارسال دیتای جدید (${i + 1} از ${filesToSend.length}: ${f.path})...`);
       const blob = await gh(`/repos/${cfg.owner}/${cfg.repo}/git/blobs`, cfg, {
         method: "POST",
         body: JSON.stringify({
@@ -849,7 +924,20 @@ export async function pushCombinedToGitHub(cfg, { silent = false, task = null, t
     });
 
     currentTask.update(89, "ثبت کامیت در ریپازیتوری...");
-    const message = `🤖 همگام‌سازی کامل محصولات و پشتیبان (عمومی و خصوصی) — ${new Date().toLocaleString("fa-IR")}`;
+    const changedLabels = filesToSend
+      .filter((f) => !f.path.endsWith("meta.json"))
+      .map((f) => {
+        const name = f.path.split("/").pop().replace(".json", "");
+        if (name === "invoices") return "فاکتورها";
+        if (name === "proformas") return "پیش‌فاکتورها";
+        if (name === "products") return "محصولات";
+        if (name === "product-categories") return "دسته‌بندی‌ها";
+        if (name === "customers") return "مشتریان";
+        if (name === "announcements") return "اعلانات";
+        return name;
+      });
+    const uniqueLabels = Array.from(new Set(changedLabels)).join("، ") || "اطلاعات جدید";
+    const message = `📤 بروزرسانی دیتای جدید (${uniqueLabels}) — ${new Date().toLocaleString("fa-IR")}`;
     const commit = await gh(
       `/repos/${cfg.owner}/${cfg.repo}/git/commits`,
       cfg,
@@ -1043,12 +1131,32 @@ export async function pushBackupToGitHub({
       baseTree = lastCommit.tree.sha;
     }
 
-    currentTask.update(35, "ارسال فایل‌های پشتیبان...");
+    let remoteFileShas = new Map();
+    if (baseTree) {
+      try {
+        const treeData = await gh(
+          `/repos/${cfg.owner}/${cfg.repo}/git/trees/${baseTree}?recursive=1`,
+          cfg,
+        );
+        if (Array.isArray(treeData?.tree)) {
+          remoteFileShas = new Map(treeData.tree.map((t) => [t.path, t.sha]));
+        }
+      } catch (_) {}
+    }
+
+    currentTask.update(35, "بررسی و تفکیک فایل‌های دارای داده جدید...");
+    const filesToSend = baseTree ? await filterOnlyChangedFiles(files, remoteFileShas) : files;
+
+    if (baseTree && filesToSend.length === 0) {
+      currentTask.complete("پشتیبان با گیت‌هاب همگام است (داده جدیدی برای ارسال وجود ندارد) ✅");
+      return { ok: true, noChanges: true, message: "پشتیبان همگام است" };
+    }
+
     const treeItems = [];
-    for (let i = 0; i < files.length; i++) {
-      const f = files[i];
-      const p = Math.round(35 + ((i + 1) / files.length) * 45);
-      currentTask.update(p, `ارسال پشتیبان (${i + 1} از ${files.length})...`);
+    for (let i = 0; i < filesToSend.length; i++) {
+      const f = filesToSend[i];
+      const p = Math.round(35 + ((i + 1) / filesToSend.length) * 45);
+      currentTask.update(p, `ارسال دیتای جدید (${i + 1} از ${filesToSend.length}: ${f.path})...`);
       const blob = await gh(`/repos/${cfg.owner}/${cfg.repo}/git/blobs`, cfg, {
         method: "POST",
         body: JSON.stringify({
@@ -1093,7 +1201,19 @@ export async function pushBackupToGitHub({
     });
 
     currentTask.update(89, "ثبت کامیت در ریپازیتوری...");
-    const message = `🤖 بک‌آپ خودکار: ${store.getInvoices().length} فاکتور، ${store.getProductCategories().length} دسته محصول — ${new Date().toLocaleString("fa-IR")}`;
+    const changedLabels = filesToSend
+      .filter((f) => !f.path.endsWith("meta.json"))
+      .map((f) => {
+        const name = f.path.split("/").pop().replace(".json", "");
+        if (name === "invoices") return "فاکتورها";
+        if (name === "proformas") return "پیش‌فاکتورها";
+        if (name === "products") return "محصولات";
+        if (name === "product-categories") return "دسته‌بندی‌ها";
+        if (name === "customers") return "مشتریان";
+        return name;
+      });
+    const uniqueLabels = Array.from(new Set(changedLabels)).join("، ") || "پشتیبان";
+    const message = `📥 بروزرسانی دیتای جدید (${uniqueLabels}) — ${new Date().toLocaleString("fa-IR")}`;
     const commit = await gh(
       `/repos/${cfg.owner}/${cfg.repo}/git/commits`,
       cfg,
@@ -1250,6 +1370,7 @@ export async function pushToPublicRepo({
       );
       baseTree = lastCommit.tree.sha;
 
+      let remoteFileShas = new Map();
       try {
         const treeData = await gh(
           `/repos/${cfg.owner}/${cfg.repo}/git/trees/${baseTree}?recursive=1`,
@@ -1257,6 +1378,7 @@ export async function pushToPublicRepo({
         );
         if (Array.isArray(treeData?.tree)) {
           existingPaths = new Set(treeData.tree.map((t) => t.path));
+          remoteFileShas = new Map(treeData.tree.map((t) => [t.path, t.sha]));
         }
       } catch {}
     } catch {
@@ -1287,12 +1409,19 @@ export async function pushToPublicRepo({
       baseTree = lastCommit.tree.sha;
     }
 
-    currentTask.update(35, "ارسال داده‌های عمومی...");
+    currentTask.update(35, "بررسی و تفکیک فایل‌های دارای داده جدید عمومی...");
+    const filesToSend = baseTree ? await filterOnlyChangedFiles(files, remoteFileShas) : files;
+
+    if (baseTree && filesToSend.length === 0) {
+      currentTask.complete("داده‌های عمومی با گیت‌هاب همگام هستند (داده جدیدی برای ارسال وجود ندارد) ✅");
+      return { ok: true, noChanges: true, message: "داده‌های عمومی همگام هستند" };
+    }
+
     const treeItems = [];
-    for (let i = 0; i < files.length; i++) {
-      const f = files[i];
-      const p = Math.round(35 + ((i + 1) / files.length) * 45);
-      currentTask.update(p, `ارسال داده‌های عمومی (${i + 1} از ${files.length})...`);
+    for (let i = 0; i < filesToSend.length; i++) {
+      const f = filesToSend[i];
+      const p = Math.round(35 + ((i + 1) / filesToSend.length) * 45);
+      currentTask.update(p, `ارسال دیتای جدید عمومی (${i + 1} از ${filesToSend.length}: ${f.path})...`);
       const blob = await gh(`/repos/${cfg.owner}/${cfg.repo}/git/blobs`, cfg, {
         method: "POST",
         body: JSON.stringify({
@@ -1357,7 +1486,18 @@ export async function pushToPublicRepo({
     });
 
     currentTask.update(89, "ثبت کامیت در ریپازیتوری...");
-    const message = `📤 بروزرسانی محصولات و دسته‌بندی‌ها (عمومی) — ${new Date().toLocaleString("fa-IR")}`;
+    const changedLabels = filesToSend
+      .filter((f) => !f.path.endsWith("meta.json"))
+      .map((f) => {
+        const name = f.path.split("/").pop().replace(".json", "");
+        if (name === "products") return "محصولات";
+        if (name === "product-categories") return "دسته‌بندی‌ها";
+        if (name === "announcements") return "اعلانات";
+        if (name === "shop-info") return "اطلاعات فروشگاه";
+        return name;
+      });
+    const uniqueLabels = Array.from(new Set(changedLabels)).join("، ") || "داده‌های عمومی";
+    const message = `📤 بروزرسانی دیتای جدید عمومی (${uniqueLabels}) — ${new Date().toLocaleString("fa-IR")}`;
     const commit = await gh(
       `/repos/${cfg.owner}/${cfg.repo}/git/commits`,
       cfg,

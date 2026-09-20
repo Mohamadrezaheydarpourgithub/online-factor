@@ -60,14 +60,49 @@ async function ensurePermission(handle, { request = true } = {}) {
   if (!handle) return false;
   const opts = { mode: "readwrite" };
   try {
-    if ((await handle.queryPermission(opts)) === "granted") return true;
+    const q = await handle.queryPermission(opts).catch(() => "prompt");
+    if (q === "granted") return true;
     if (request) {
-      return (await handle.requestPermission(opts)) === "granted";
+      try {
+        const r = await handle.requestPermission(opts);
+        return r === "granted";
+      } catch (err) {
+        console.warn("امکان درخواست مجوز پوشه بدون تعامل کاربر وجود ندارد:", err);
+        return false;
+      }
     }
     return false;
-  } catch {
+  } catch (err) {
+    console.warn("خطا در بررسی مجوز پوشه:", err);
     return false;
   }
+}
+
+/* بررسی اینکه آیا نام پوشه دقیقاً یا بر اساس الگو با تاریخ امروز همخوانی دارد */
+export function isFolderMatchingToday(folderName, todayDate) {
+  if (!folderName || !todayDate) return false;
+  const cleanFolder = toEnglishDigits(folderName).trim();
+  const cleanToday = toEnglishDigits(todayDate).trim();
+
+  if (cleanFolder === cleanToday) return true;
+
+  const fDigits = cleanFolder.replace(/\D/g, "");
+  const tDigits = cleanToday.replace(/\D/g, "");
+  if (fDigits.length >= 8 && tDigits.length >= 8 && (fDigits === tDigits || fDigits.endsWith(tDigits))) {
+    return true;
+  }
+  if (cleanFolder.includes(cleanToday)) return true;
+  return false;
+}
+
+/* بررسی اینکه آیا نام پوشه اساساً یک فرمت تاریخ است (مثلاً 1405-06-29) */
+export function isDateNamedFolder(folderName) {
+  if (!folderName) return false;
+  const clean = toEnglishDigits(folderName).trim();
+  return (
+    /^1[34]\d{2}[-_/. ]\d{1,2}[-_/. ]\d{1,2}$/.test(clean) ||
+    /^\d{4}[-_/. ]\d{1,2}[-_/. ]\d{1,2}$/.test(clean)
+  );
 }
 
 /* =========================================================================
@@ -236,13 +271,15 @@ export async function performLocalFolderBackup({
       return { ok: false, reason: "no_dir" };
     }
 
-    // بررسی مجوز دسترسی به پوشه
+    // بررسی مجوز دسترسی به پوشه (در هر دو حالت manual و offline اجازه درخواست مجوز فعال است)
     const hasPerm = await ensurePermission(dirHandle, {
-      request: trigger === "manual",
+      request: trigger === "manual" || trigger === "offline",
     });
     if (!hasPerm) {
       if (trigger === "manual") {
         alert("⚠️ دسترسی به پوشه انتخاب‌شده تایید نشد یا منقضی شده است.\nلطفاً دوباره پوشه را انتخاب کنید.");
+      } else if (trigger === "offline" && showToast) {
+        showBackupToast("⚠️ دسترسی به پوشه محلی نیازمند تأیید است؛ لطفاً در تنظیمات روی پوشه کلیک کنید");
       }
       refreshLocalFolderUI();
       return { ok: false, reason: "no_permission" };
@@ -256,8 +293,11 @@ export async function performLocalFolderBackup({
     const lastFolderDate = lbConfig.lastBackupDate;
     const autoConfirmNewDay = Boolean(lbConfig.autoConfirmNewDay);
 
-    // بررسی عدم همخوانی تاریخ پوشه قبلی با تاریخ امروز (در حالت آفلاین به صورت خودکار پوشه روز جدید ساخته می‌شود)
-    if (lastFolderDate && lastFolderDate !== todayDate && !forceNewFolder && trigger !== "offline") {
+    const isAlreadyToday = isFolderMatchingToday(dirHandle.name, todayDate);
+    const isDateFolder = isDateNamedFolder(dirHandle.name);
+
+    // بررسی عدم همخوانی تاریخ پوشه قبلی با تاریخ امروز (اگر خود پوشه انتخابی تاریخ دار باشد یا در حالت آفلاین، نیازی به تأیید نیست)
+    if (!isAlreadyToday && !isDateFolder && lastFolderDate && lastFolderDate !== todayDate && !forceNewFolder && trigger !== "offline") {
       if (!autoConfirmNewDay) {
         // هشدار به ادمین و درخواست تأیید
         const userApproved = await askAdminNewDayFolderConfirm(lastFolderDate, todayDate);
@@ -271,8 +311,15 @@ export async function performLocalFolderBackup({
       }
     }
 
-    // ۱. دسترسی یا ساخت پوشه تاریخ امروز (مثلاً 1405-06-29)
-    const todayDir = await dirHandle.getDirectoryHandle(todayDate, { create: true });
+    // ۱. دسترسی یا ساخت پوشه تاریخ امروز (جلوگیری قطعی از ساخت فولدر تکراری مانند 1405-06-29/1405-06-29)
+    let todayDir;
+    if (isAlreadyToday || isDateFolder) {
+      // خود پوشه انتخاب‌شده پوشه تاریخ‌دار است — فایل‌ها مستقیماً داخل همین پوشه ذخیره می‌شوند
+      todayDir = dirHandle;
+    } else {
+      // پوشه مادر انتخاب شده است — پوشه تاریخ امروز درون آن ساخته می‌شود
+      todayDir = await dirHandle.getDirectoryHandle(todayDate, { create: true });
+    }
 
     // ۲. گردآوری کلیه داده‌های سیستم (دیتای ریپوی خصوصی و عمومی)
     const datasets = collectAllBackupDatasets();
@@ -359,6 +406,23 @@ export async function selectBackupDirectory() {
   }
 
   try {
+    // اگر از قبل پوشه در پایگاه ذخیره شده ولی نیازمند فعال‌سازی مجدد مجوز است، ابتدا پرامپت تایید مجوز را فعال می‌کنیم
+    if (!dirHandle) {
+      dirHandle = await idbGet(DIR_HANDLE_KEY).catch(() => null);
+    }
+    if (dirHandle) {
+      const currentPerm = await dirHandle.queryPermission({ mode: "readwrite" }).catch(() => "prompt");
+      if (currentPerm !== "granted") {
+        const ok = await ensurePermission(dirHandle, { request: true });
+        if (ok) {
+          refreshLocalFolderUI();
+          showBackupToast(`✅ مجوز دسترسی به پوشه «${dirHandle.name}» با موفقیت فعال شد`);
+          await performLocalFolderBackup({ trigger: "manual", showToast: true });
+          return;
+        }
+      }
+    }
+
     const handle = await window.showDirectoryPicker({ mode: "readwrite" });
     const ok = await ensurePermission(handle, { request: true });
     if (!ok) {
