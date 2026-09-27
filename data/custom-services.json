@@ -1,6 +1,37 @@
 {
   "newCategories": [
     {
+      "id": "cat-muk22622jd0kq",
+      "title": "درخواست کد پستی",
+      "items": [
+        {
+          "id": "srv-muk22622upg04",
+          "title": "اطلاعات وارد شده 2 تب",
+          "price": 219000,
+          "custom": true
+        },
+        {
+          "id": "srv-muk22622r30sh",
+          "title": "پرداخت اینترنتی",
+          "price": 30400,
+          "custom": true
+        },
+        {
+          "id": "srv-muk226223dpqj",
+          "title": "چاپ تیجه نهایی",
+          "price": 21000,
+          "custom": true
+        },
+        {
+          "id": "srv-muk22622psv5s",
+          "title": "خدمات غیر حضوری",
+          "price": 65000,
+          "custom": true
+        }
+      ],
+      "custom": true
+    },
+    {
       "id": "cat-mucqghtc7dpw3",
       "title": "خدمات دارایی",
       "items": [
