@@ -1,5 +1,22 @@
 [
   {
+    "id": "mujlcyo92tame",
+    "name": "برچسب ساده",
+    "categoryId": "pcat-stationery",
+    "price": 15000,
+    "quantity": 50,
+    "image": "",
+    "variants": [],
+    "colors": [
+      {
+        "name": "سفید",
+        "hex": "#ffffff"
+      }
+    ],
+    "description": "",
+    "isSpecialOffer": false
+  },
+  {
     "id": "mui8cwn4n4a6k",
     "name": "برچسب 3 بعدی",
     "categoryId": "pcat-stationery",
