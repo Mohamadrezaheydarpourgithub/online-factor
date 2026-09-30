@@ -1,6 +1,25 @@
 {
   "newCategories": [
     {
+      "id": "cat-muo8orqmqjrgp",
+      "title": "دریافت نتیجه آزمایش",
+      "items": [
+        {
+          "id": "srv-muo8orqmy2jdq",
+          "title": "ورود به سامانه و دریافت جواب با 1 برگ",
+          "price": 71000,
+          "custom": true
+        },
+        {
+          "id": "srv-muo8orqmzrv68",
+          "title": "برگ اضافه",
+          "price": 11000,
+          "custom": true
+        }
+      ],
+      "custom": true
+    },
+    {
       "id": "cat-muk22622jd0kq",
       "title": "درخواست کد پستی",
       "items": [
