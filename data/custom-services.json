@@ -2,12 +2,18 @@
   "newCategories": [
     {
       "id": "cat-muvev8wa6caob",
-      "title": "تایپ فوری",
+      "title": "تایپ فوری و ویرایش عکس در فتوشاپ",
       "items": [
         {
           "id": "srv-muvev8wabjxah",
           "title": "تایپ فوری",
           "price": 20000,
+          "custom": true
+        },
+        {
+          "id": "srv-muy1zfz5lipju",
+          "title": "ویرایش عکس",
+          "price": 15000,
           "custom": true
         }
       ],
