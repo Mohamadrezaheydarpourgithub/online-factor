@@ -1,6 +1,37 @@
 {
   "newCategories": [
     {
+      "id": "cat-muzer02j328vv",
+      "title": "پذيرش دانشجو صرفاً بر اساس سوابق تحصيلي آزمون سراسري",
+      "items": [
+        {
+          "id": "srv-muzer02jknftm",
+          "title": "خرید کارت اینترنتی",
+          "price": 85000,
+          "custom": true
+        },
+        {
+          "id": "srv-muzer02j3flvo",
+          "title": "ثبت نام دانشجو",
+          "price": 365000,
+          "custom": true
+        },
+        {
+          "id": "srv-muzer02j22ayq",
+          "title": "انتخاب به ازای هر کد رشته بالا تر از 5 عدد",
+          "price": 15000,
+          "custom": true
+        },
+        {
+          "id": "srv-muzer02jyhgsk",
+          "title": "پرینت نتیجه نهایی",
+          "price": 21000,
+          "custom": true
+        }
+      ],
+      "custom": true
+    },
+    {
       "id": "cat-muzap6jn56pfs",
       "title": "ثبت خودرو در سامانه نوسازی ناوگان و اسقاط خودروهای فرسوده",
       "items": [
