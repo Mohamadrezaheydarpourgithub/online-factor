@@ -33,6 +33,12 @@
         "title": "ثبت نام دانشجو",
         "price": 365000,
         "custom": true
+      },
+      {
+        "id": "srv-muzeivxjnp5nn",
+        "title": "پرینت نتیجه نهایی",
+        "price": 21000,
+        "custom": true
       }
     ],
     "custom": true
