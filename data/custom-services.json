@@ -1,6 +1,25 @@
 {
   "newCategories": [
     {
+      "id": "cat-muzap6jn56pfs",
+      "title": "ثبت خودرو در سامانه نوسازی ناوگان و اسقاط خودروهای فرسوده",
+      "items": [
+        {
+          "id": "srv-muzap6jntpge0",
+          "title": "ثبت اطلاعات خودرو",
+          "price": 379000,
+          "custom": true
+        },
+        {
+          "id": "srv-muzap6jn9d28f",
+          "title": "پرینت نتیجه نهایی",
+          "price": 21000,
+          "custom": true
+        }
+      ],
+      "custom": true
+    },
+    {
       "id": "cat-muy94w0166aw9",
       "title": "ثبت نام دانشگاه آزاد بدون کنکور",
       "items": [
