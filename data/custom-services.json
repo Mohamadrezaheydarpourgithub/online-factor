@@ -1,6 +1,19 @@
 {
   "newCategories": [
     {
+      "id": "cat-mv2gzvup1mrxa",
+      "title": "راه اندازی همراه بانک",
+      "items": [
+        {
+          "id": "srv-mv2gzvupbzpt4",
+          "title": "راه اندازی راه اندازی همراه بانک",
+          "price": 150000,
+          "custom": true
+        }
+      ],
+      "custom": true
+    },
+    {
       "id": "cat-muzer02j328vv",
       "title": "پذيرش دانشجو صرفاً بر اساس سوابق تحصيلي آزمون سراسري",
       "items": [
