@@ -616,25 +616,25 @@
         {
           "id": "srv-mu9p4kpogderj",
           "title": "فنر 14",
-          "price": 60000,
+          "price": 70000,
           "custom": true
         },
         {
           "id": "srv-mu9p4kpozud3h",
           "title": "فنر 16",
-          "price": 60000,
+          "price": 70000,
           "custom": true
         },
         {
           "id": "srv-mu9p4kpomw807",
           "title": "فنر 18",
-          "price": 75000,
+          "price": 85000,
           "custom": true
         },
         {
           "id": "srv-mu9p4kpor493q",
           "title": "فنر 20",
-          "price": 95000,
+          "price": 105000,
           "custom": true
         },
         {
@@ -646,7 +646,7 @@
         {
           "id": "srv-muk2djpcdxqjo",
           "title": "فنر 12",
-          "price": 55000,
+          "price": 65000,
           "custom": true
         }
       ],
