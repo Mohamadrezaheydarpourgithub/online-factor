@@ -264,6 +264,12 @@
         "title": "خدمات غیر حضوری",
         "price": 65000,
         "custom": true
+      },
+      {
+        "id": "srv-mv3j0keao93s0",
+        "title": "ثبت هر کد پستی اضافه",
+        "price": 10000,
+        "custom": true
       }
     ],
     "custom": true
