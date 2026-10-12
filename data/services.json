@@ -20,6 +20,12 @@
         "title": "ثبت اعتراض رایانه",
         "price": 185000,
         "custom": true
+      },
+      {
+        "id": "srv-mv54e88x8wmgn",
+        "title": "ورود به سامانه",
+        "price": 50000,
+        "custom": true
       }
     ],
     "custom": true
