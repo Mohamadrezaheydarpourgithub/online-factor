@@ -2,7 +2,7 @@
   "newCategories": [
     {
       "id": "cat-mv3zg579uenzr",
-      "title": "خود اظهاری کالابرگ",
+      "title": "خود اظهاری کالابرگ , ثبت اعتراض رایانه",
       "items": [
         {
           "id": "srv-mv3zg579rbq5k",
@@ -14,6 +14,12 @@
           "id": "srv-mv3zoevpx2bry",
           "title": "چاپ نتیجه نهایی",
           "price": 21000,
+          "custom": true
+        },
+        {
+          "id": "srv-mv548ade61v00",
+          "title": "ثبت اعتراض رایانه",
+          "price": 185000,
           "custom": true
         }
       ],
