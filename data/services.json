@@ -1,5 +1,48 @@
 [
   {
+    "id": "cat-mv6ni8mp0edkz",
+    "title": "هزینه ثبت نام سیمین و NCR",
+    "items": [
+      {
+        "id": "srv-mv6ni8mpgl1h7",
+        "title": "ثبت نام NCR",
+        "price": 184000,
+        "custom": true
+      },
+      {
+        "id": "srv-mv6ni8mpqhshr",
+        "title": "حذف یا اضافه کردن عضو در NCR",
+        "price": 234000,
+        "custom": true
+      },
+      {
+        "id": "srv-mv6ni8mpva33z",
+        "title": "تغییر شماره شبا در سامانه سیمین",
+        "price": 304400,
+        "custom": true
+      },
+      {
+        "id": "srv-mv6ni8mp17pfz",
+        "title": "اصلاح خانوار در سامانه سیمین",
+        "price": 304400,
+        "custom": true
+      },
+      {
+        "id": "srv-mv6ni8mpflxpi",
+        "title": "پرینت نتیجه نهایی",
+        "price": 21000,
+        "custom": true
+      },
+      {
+        "id": "srv-mv6ni8mpbyep7",
+        "title": "پرینت هر برگ اضافه",
+        "price": 11000,
+        "custom": true
+      }
+    ],
+    "custom": true
+  },
+  {
     "id": "cat-mv3zg579uenzr",
     "title": "خود اظهاری کالابرگ , ثبت اعتراض رایانه",
     "items": [
