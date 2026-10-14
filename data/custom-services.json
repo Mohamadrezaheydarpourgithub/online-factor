@@ -101,6 +101,12 @@
           "title": "ورود به سامانه",
           "price": 50000,
           "custom": true
+        },
+        {
+          "id": "srv-mv84jgjv4a57p",
+          "title": "پرینت نتیجه نهایی",
+          "price": 21000,
+          "custom": true
         }
       ],
       "custom": true
