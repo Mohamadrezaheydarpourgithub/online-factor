@@ -1,5 +1,46 @@
 [
   {
+    "id": "mv9ub9c60lu8f",
+    "name": "سر مدادی عروسکی",
+    "categoryId": "pcat-stationery",
+    "price": 45000,
+    "quantity": 0,
+    "image": "",
+    "variants": [],
+    "colors": [
+      {
+        "name": "طلایی",
+        "hex": "#d97706"
+      },
+      {
+        "name": "سبز",
+        "hex": "#16a34a"
+      },
+      {
+        "name": "قرمز",
+        "hex": "#dc2626"
+      },
+      {
+        "name": "آبی",
+        "hex": "#2563eb"
+      },
+      {
+        "name": "نقره‌ای",
+        "hex": "#94a3b8"
+      },
+      {
+        "name": "سفید",
+        "hex": "#ffffff"
+      },
+      {
+        "name": "مشکی",
+        "hex": "#111827"
+      }
+    ],
+    "description": "",
+    "isSpecialOffer": false
+  },
+  {
     "id": "mv9tw8u7fc0kb",
     "name": "کاربن",
     "categoryId": "pcat-stationery",
