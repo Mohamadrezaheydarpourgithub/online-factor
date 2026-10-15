@@ -119,6 +119,12 @@
         "title": "پرینت نتیجه نهایی",
         "price": 21000,
         "custom": true
+      },
+      {
+        "id": "srv-mv97mjhlhhz1d",
+        "title": "هزینه انجام خدمات غیر حضوری",
+        "price": 65000,
+        "custom": true
       }
     ],
     "custom": true
