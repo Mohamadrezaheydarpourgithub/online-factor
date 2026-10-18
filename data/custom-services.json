@@ -1,6 +1,25 @@
 {
   "newCategories": [
     {
+      "id": "cat-mvdnfszt1y58l",
+      "title": "افتتاح حساب رسالت",
+      "items": [
+        {
+          "id": "srv-mvdnfszt0z1np",
+          "title": "افتتاح حساب رسالت",
+          "price": 300000,
+          "custom": true
+        },
+        {
+          "id": "srv-mvdnfszt83sut",
+          "title": "اعتبار سنجی افتتاح حساب",
+          "price": 100000,
+          "custom": true
+        }
+      ],
+      "custom": true
+    },
+    {
       "id": "cat-mvdjuzmkj13x2",
       "title": "ایجاد رزومه کاری",
       "items": [
