@@ -578,6 +578,12 @@
         "title": "اضافه بها بابت ارائه خدمات غیر حضوری",
         "price": 65000,
         "custom": true
+      },
+      {
+        "id": "srv-mvdis48c9cbrb",
+        "title": "ارسال نتیجه نهایی",
+        "price": 21000,
+        "custom": true
       }
     ],
     "custom": true
