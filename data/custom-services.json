@@ -215,6 +215,12 @@
           "title": "آزمون سلامت",
           "price": 50000,
           "custom": true
+        },
+        {
+          "id": "srv-mvo2alow5p27a",
+          "title": "هزینه خدمات غیر حضوری",
+          "price": 65000,
+          "custom": true
         }
       ],
       "custom": true
