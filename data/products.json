@@ -33,7 +33,7 @@
     "name": "خودکار روان نویس",
     "categoryId": "pcat-stationery",
     "price": 65000,
-    "quantity": 14,
+    "quantity": 12,
     "image": "",
     "variants": [],
     "colors": [
@@ -442,7 +442,7 @@
     "name": "دفتر 80 برگ شفیعی کد 75",
     "categoryId": "pcat-stationery",
     "price": 160000,
-    "quantity": 1,
+    "quantity": 0,
     "image": "",
     "variants": [],
     "colors": [],
