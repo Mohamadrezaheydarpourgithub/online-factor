@@ -1,5 +1,24 @@
 [
   {
+    "id": "cat-mvrtkqrzviksz",
+    "title": "ثبت بیمه نامه سامانه ازکی",
+    "items": [
+      {
+        "id": "srv-mvrtkqrzdxttb",
+        "title": "ثبت بیمه نامه ازکی",
+        "price": 350000,
+        "custom": true
+      },
+      {
+        "id": "srv-mvrtkqrzbiagg",
+        "title": "پرینت نتیجه نهایی",
+        "price": 21000,
+        "custom": true
+      }
+    ],
+    "custom": true
+  },
+  {
     "id": "cat-mvnnot83mve56",
     "title": "خدمات و کلاس های هدا تخلف رانندگی",
     "items": [
