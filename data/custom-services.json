@@ -1,6 +1,37 @@
 {
   "newCategories": [
     {
+      "id": "cat-mvxj67eli53e6",
+      "title": "ثبت آزمون نام بانک دی",
+      "items": [
+        {
+          "id": "srv-mvxj67elnwbr9",
+          "title": "ثبت نام اولیه + 8 تیبل",
+          "price": 465000,
+          "custom": true
+        },
+        {
+          "id": "srv-mvxj67elv0mw2",
+          "title": "خرید کارت ثبت نام",
+          "price": 85000,
+          "custom": true
+        },
+        {
+          "id": "srv-mvxj67elpfbuy",
+          "title": "پرینت نتیجه نهایی",
+          "price": 21000,
+          "custom": true
+        },
+        {
+          "id": "srv-mvxj67el0h448",
+          "title": "هزینه به صورت دورکاری",
+          "price": 65000,
+          "custom": true
+        }
+      ],
+      "custom": true
+    },
+    {
       "id": "cat-mvs8ibcid5emp",
       "title": "خرید کنتور برق",
       "items": [
