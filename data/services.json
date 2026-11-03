@@ -1,5 +1,31 @@
 [
   {
+    "id": "cat-mw0ifs1kfmgyr",
+    "title": "همراه بانک بانک ملی بام",
+    "items": [
+      {
+        "id": "srv-mw0ifs1k8c18v",
+        "title": "ثبت نام و راه اندازی بام",
+        "price": 350000,
+        "custom": true
+      }
+    ],
+    "custom": true
+  },
+  {
+    "id": "cat-mw0iexwh9hu9e",
+    "title": "ثبت /تایید چک صیادی",
+    "items": [
+      {
+        "id": "srv-mw0iexwhjytxl",
+        "title": "ثبت /تایید چک صیادی",
+        "price": 85000,
+        "custom": true
+      }
+    ],
+    "custom": true
+  },
+  {
     "id": "cat-mvxj67eli53e6",
     "title": "ثبت آزمون نام بانک دی",
     "items": [
