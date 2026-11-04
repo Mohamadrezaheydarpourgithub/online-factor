@@ -892,6 +892,30 @@
         "title": "به ازای هر ماترک اضافه",
         "price": 75200,
         "custom": true
+      },
+      {
+        "id": "srv-mw2axw4fpmi9w",
+        "title": "ثبت قرارداد در سامانه مودیان",
+        "price": 188000,
+        "custom": true
+      },
+      {
+        "id": "srv-mw2axw4f97u6h",
+        "title": "مالیات بر حقوق",
+        "price": 188000,
+        "custom": true
+      },
+      {
+        "id": "srv-mw2axw4fsahzt",
+        "title": "صدور قبض حق تمبر",
+        "price": 92000,
+        "custom": true
+      },
+      {
+        "id": "srv-mw2axw4fedjnb",
+        "title": "صدور قبوض متفرقه",
+        "price": 92000,
+        "custom": true
       }
     ],
     "custom": true
