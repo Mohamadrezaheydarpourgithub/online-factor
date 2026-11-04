@@ -922,6 +922,36 @@
         "title": "استعلام مالیات خودرو های لوکس-استعلام مالیات مسکن",
         "price": 107400,
         "custom": true
+      },
+      {
+        "id": "srv-mw2bebqlx2myq",
+        "title": "تاییدیه کد پستی",
+        "price": 57600,
+        "custom": true
+      },
+      {
+        "id": "srv-mw2bebql14ek7",
+        "title": "ثبت نام درگاه یکپارچه خدمات مالیاتی",
+        "price": 280000,
+        "custom": true
+      },
+      {
+        "id": "srv-mw2bebqli7tm8",
+        "title": "پلمپ دفاتر تجاری(شخص حقوقی)",
+        "price": 768000,
+        "custom": true
+      },
+      {
+        "id": "srv-mw2bebqlrz3jx",
+        "title": "پلمپ دفاتر تجاری(شخص حقیقی)",
+        "price": 576000,
+        "custom": true
+      },
+      {
+        "id": "srv-mw2bebql7i7c0",
+        "title": "ثبت شناسه یکتا مالیاتی و تولید 1 کلید به همراه بازگذاری اطلاعات توکن مالیاتی",
+        "price": 768000,
+        "custom": true
       }
     ],
     "custom": true
