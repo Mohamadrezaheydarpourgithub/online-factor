@@ -753,7 +753,7 @@
         {
           "id": "srv-mucqghtcpr8sz",
           "title": "ثبت نام تکمیلی کد اقتصادی",
-          "price": 214001,
+          "price": 214000,
           "custom": true
         },
         {
@@ -844,6 +844,54 @@
           "id": "srv-mw1ylrc0l60jd",
           "title": "اظهار نامه حقیقی گروه سوم",
           "price": 560000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw2atlifq27lp",
+          "title": "اظهارنامه حقوقی در صورت آماده بودن ترازنامه",
+          "price": 1862000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw2atliffrs6k",
+          "title": "توافق تبصره 100",
+          "price": 480000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw2atlif94pe5",
+          "title": "مستغلات",
+          "price": 660000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw2atlifmsywc",
+          "title": "هر مستاجر اضافه",
+          "price": 120900,
+          "custom": true
+        },
+        {
+          "id": "srv-mw2atlifq66ni",
+          "title": "به ازای هر قبض اضافه",
+          "price": 44800,
+          "custom": true
+        },
+        {
+          "id": "srv-mw2atlifk0s79",
+          "title": "به ازای هر شریک اضافه",
+          "price": 98000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw2atlifcn38f",
+          "title": "اظهارنامه مالیات بر ارث+ هزینه ثبت نام اولیه",
+          "price": 660000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw2atliffx2x1",
+          "title": "به ازای هر ماترک اضافه",
+          "price": 75200,
           "custom": true
         }
       ],
