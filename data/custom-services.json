@@ -1,6 +1,25 @@
 {
   "newCategories": [
     {
+      "id": "cat-mw2dvmq2xhdgu",
+      "title": "دریافت کارت ورود به جلسه",
+      "items": [
+        {
+          "id": "srv-mw2dvmq28s4eg",
+          "title": "ورود به سامانه",
+          "price": 50000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw2dvmq2q9phu",
+          "title": "پرینت نتیجه نهایی",
+          "price": 21000,
+          "custom": true
+        }
+      ],
+      "custom": true
+    },
+    {
       "id": "cat-mw28icwl05phn",
       "title": "نصب و راه اندازی سیستم کامپیوتری",
       "items": [
