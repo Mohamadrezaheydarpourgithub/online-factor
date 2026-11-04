@@ -700,6 +700,24 @@
           "title": "ورود به سامانه و استعلام پرونده مالیاتی",
           "price": 71000,
           "custom": true
+        },
+        {
+          "id": "srv-mw1ylrc04gxqu",
+          "title": "اظهار نامه حقیقی گروه اول",
+          "price": 1116000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw1ylrc0rozpz",
+          "title": "اظهار نامه حقیقی گروه دوم",
+          "price": 748000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw1ylrc0l60jd",
+          "title": "اظهار نامه حقیقی گروه سوم",
+          "price": 560000,
+          "custom": true
         }
       ],
       "custom": true
