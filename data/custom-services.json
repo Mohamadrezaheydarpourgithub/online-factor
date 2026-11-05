@@ -1015,7 +1015,7 @@
     },
     {
       "id": "cat-mucgxgl73ocxu",
-      "title": "پرداخت قبض (آب-برق-گاز-تلفن)",
+      "title": "صدور و پرداخت قبض (آب-برق-گاز-تلفن)",
       "items": [
         {
           "id": "srv-mucgxgl7t7ogc",
@@ -1039,6 +1039,18 @@
           "id": "srv-mucgxgl7n14oj",
           "title": "پرداخت قبض گاز",
           "price": 35000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw3m7g03xs1yu",
+          "title": "ورود به سامانه",
+          "price": 50000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw3m7g038i13l",
+          "title": "پرینت نتیجه نهایی",
+          "price": 21000,
           "custom": true
         }
       ],
