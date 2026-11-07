@@ -21,6 +21,24 @@
           "title": "انتخاب هر خودرو",
           "price": 70400,
           "custom": true
+        },
+        {
+          "id": "srv-mw65jar02q9vz",
+          "title": "پرینت نتیجه نهایی",
+          "price": 21000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw65jar0buyrg",
+          "title": "بازیابی رمز عبور",
+          "price": 61000,
+          "custom": true
+        },
+        {
+          "id": "srv-mw65jar0ze9ko",
+          "title": "اضافه بها بابت ارائه خدمات غیر حضوری",
+          "price": 65000,
+          "custom": true
         }
       ],
       "custom": true
