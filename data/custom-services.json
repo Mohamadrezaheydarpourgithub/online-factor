@@ -15,6 +15,12 @@
           "title": "ورود به سامانه جهت انتخاب خودرو",
           "price": 50000,
           "custom": true
+        },
+        {
+          "id": "srv-mw65hnwzuha06",
+          "title": "انتخاب هر خودرو",
+          "price": 70400,
+          "custom": true
         }
       ],
       "custom": true
@@ -1663,7 +1669,7 @@
         },
         {
           "id": "ikco-03",
-          "title": "هر انتخاب",
+          "title": "انتخاب هر خودرو",
           "price": 70400
         },
         {
