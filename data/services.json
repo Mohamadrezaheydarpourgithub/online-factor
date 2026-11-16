@@ -1,5 +1,48 @@
 [
   {
+    "id": "cat-mwjf6y8n7ohu7",
+    "title": "مبلغ دلخواه",
+    "items": [
+      {
+        "id": "srv-mwjf6y8nxfx1f",
+        "title": "مبلغ دلخواه 5000",
+        "price": 5000,
+        "custom": true
+      },
+      {
+        "id": "srv-mwjf6y8nzxpsv",
+        "title": "مبلغ دلخواه 10000",
+        "price": 10000,
+        "custom": true
+      },
+      {
+        "id": "srv-mwjf6y8ny5sl0",
+        "title": "مبلغ دلخواه 15000",
+        "price": 15000,
+        "custom": true
+      },
+      {
+        "id": "srv-mwjf6y8n1kfig",
+        "title": "مبلغ دلخواه 20000",
+        "price": 20000,
+        "custom": true
+      },
+      {
+        "id": "srv-mwjf6y8n3aryc",
+        "title": "مبلغ دلخواه 25000",
+        "price": 25000,
+        "custom": true
+      },
+      {
+        "id": "srv-mwjf6y8nz181e",
+        "title": "مبلغ دلخواه 30000",
+        "price": 30000,
+        "custom": true
+      }
+    ],
+    "custom": true
+  },
+  {
     "id": "cat-mwdjlo0odopf8",
     "title": "انتقال فایل",
     "items": [
