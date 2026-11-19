@@ -45,6 +45,12 @@
           "title": "بارگزاری بیشتر از 1 تصور",
           "price": 7000,
           "custom": true
+        },
+        {
+          "id": "srv-mwnb80h7ea6xx",
+          "title": "جدول اضافه",
+          "price": 35200,
+          "custom": true
         }
       ],
       "custom": true
