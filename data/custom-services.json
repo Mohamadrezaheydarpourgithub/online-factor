@@ -9,6 +9,42 @@
           "title": "ثبت اطلاعات اولیه",
           "price": 184000,
           "custom": true
+        },
+        {
+          "id": "srv-mwnb3sl4s6b8k",
+          "title": "اسکن مدارک تا سایز A4",
+          "price": 14600,
+          "custom": true
+        },
+        {
+          "id": "srv-mwnb3sl4462ys",
+          "title": "آماده سازی تصویر جهت ارسال",
+          "price": 7000,
+          "custom": true
+        },
+        {
+          "id": "srv-mwnb3sl4tay1y",
+          "title": "پرداخت هزینه اینترنتی",
+          "price": 30400,
+          "custom": true
+        },
+        {
+          "id": "srv-mwnb3sl4nx19v",
+          "title": "ورود به سامانه",
+          "price": 50000,
+          "custom": true
+        },
+        {
+          "id": "srv-mwnb3sl4qe2n0",
+          "title": "بارگزاری 1 تصویر",
+          "price": 61000,
+          "custom": true
+        },
+        {
+          "id": "srv-mwnb3sl48zjfd",
+          "title": "بارگزاری بیشتر از 1 تصور",
+          "price": 7000,
+          "custom": true
         }
       ],
       "custom": true
