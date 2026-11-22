@@ -119,6 +119,12 @@
           "title": "مبلغ دلخواه 30000",
           "price": 30000,
           "custom": true
+        },
+        {
+          "id": "srv-mwrqux6vt64ex",
+          "title": "مبلغ دلخواه 60000",
+          "price": 60000,
+          "custom": true
         }
       ],
       "custom": true
