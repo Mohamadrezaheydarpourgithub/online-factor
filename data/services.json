@@ -1,5 +1,30 @@
 [
   {
+    "id": "cat-mwrim7mahv20x",
+    "title": "بررسی دهک خانوار",
+    "items": [
+      {
+        "id": "srv-mwrim7mate8ff",
+        "title": "ورود به سامانه",
+        "price": 50000,
+        "custom": true
+      },
+      {
+        "id": "srv-mwrim7maq66uk",
+        "title": "پرینت با ارسال نتیجه نهایی",
+        "price": 21000,
+        "custom": true
+      },
+      {
+        "id": "srv-mwrim7masxsxu",
+        "title": "هزینه خدمات غیر حضوری",
+        "price": 65000,
+        "custom": true
+      }
+    ],
+    "custom": true
+  },
+  {
     "id": "cat-mwn9j93wmxjph",
     "title": "درخواست مجوز و تمدید مجوز سلاح",
     "items": [
