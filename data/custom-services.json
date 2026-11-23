@@ -1,6 +1,31 @@
 {
   "newCategories": [
     {
+      "id": "cat-mwtbd1lqmhrif",
+      "title": "پرداخت خلافی",
+      "items": [
+        {
+          "id": "srv-mwtbd1lqba3js",
+          "title": "استعلام خلافی خودرو",
+          "price": 85000,
+          "custom": true
+        },
+        {
+          "id": "srv-mwtbd1lqn8utl",
+          "title": "پرداخت آنلاین",
+          "price": 35000,
+          "custom": true
+        },
+        {
+          "id": "srv-mwtbd1lqbi3n1",
+          "title": "پرنت نتیجه نهایی",
+          "price": 21000,
+          "custom": true
+        }
+      ],
+      "custom": true
+    },
+    {
       "id": "cat-mwt55cnc7wj05",
       "title": "ثبت نام دانشگاه دولتی-سامانه گلستان",
       "items": [
