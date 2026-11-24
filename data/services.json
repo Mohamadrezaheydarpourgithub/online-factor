@@ -1242,6 +1242,12 @@
         "title": "حق مشاوره- بررسی پرونده مالیاتی به ازای هر نیم ساعت",
         "price": 400000,
         "custom": true
+      },
+      {
+        "id": "srv-mwukrzgou8shx",
+        "title": "اضافه بها بابت ارائه خدمات غیر حضوری",
+        "price": 65000,
+        "custom": true
       }
     ],
     "custom": true
