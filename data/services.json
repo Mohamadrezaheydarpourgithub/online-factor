@@ -186,6 +186,12 @@
         "title": "مبلغ دلخواه 60000",
         "price": 60000,
         "custom": true
+      },
+      {
+        "id": "srv-mww6r4kqww0rm",
+        "title": "مبلغ دلخواه 6400",
+        "price": 6400,
+        "custom": true
       }
     ],
     "custom": true
