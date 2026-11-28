@@ -1,6 +1,43 @@
 {
   "newCategories": [
     {
+      "id": "cat-mx03k9b8jmu2x",
+      "title": "آزمون صلاحیت حرفه ای پرستاری",
+      "items": [
+        {
+          "id": "srv-mx03k9b8e7ysu",
+          "title": "ثبت نام اولیه + 4 تیبل اضافه",
+          "price": 325000,
+          "custom": true
+        },
+        {
+          "id": "srv-mx03k9b8hqtnk",
+          "title": "پرداخت اینترنتی",
+          "price": 35000,
+          "custom": true
+        },
+        {
+          "id": "srv-mx03k9b8l76cb",
+          "title": "ارسال مدارک (7 عدد)",
+          "price": 103000,
+          "custom": true
+        },
+        {
+          "id": "srv-mx03k9b84a50z",
+          "title": "سایز کردن مدارک 7 عدد",
+          "price": 42000,
+          "custom": true
+        },
+        {
+          "id": "srv-mx03k9b8equu2",
+          "title": "پرینت نتیجه نهایی",
+          "price": 21000,
+          "custom": true
+        }
+      ],
+      "custom": true
+    },
+    {
       "id": "cat-mwtbd1lqmhrif",
       "title": "پرداخت خلافی",
       "items": [
